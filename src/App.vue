@@ -1,17 +1,16 @@
 <template>
 	<div>
-		<ToDoList />
+		<Main />
 	</div>
 </template>
 
 <script>
-import ToDoList from './components/ToDoList.vue'
-
+import Main from './views/Main.vue'
 
 export default {
 	name: 'App',
 	components: {
-		ToDoList
+		Main
 	}
 }
 </script>

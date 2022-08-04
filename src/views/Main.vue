@@ -15,39 +15,25 @@
 					</div>
 					<div class="card-body doto-items">
 						<template v-for="(item) in ToDoElements">
-							<div :key="`item-${item.id}`" :class="['border p-2 mb-2 d-flex justify-content-between', item.status != 'draft' ? 'item-active' : '']" v-if="item.status != 'terminated'">
-								<div class="my-auto">
-									{{ item.title }}
-								</div>
-								<div v-if="item.status != 'draft'">
-									<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit"></i></button>
-									<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close"></i></button>
-								</div>
-							</div>
+							<Element :key="`item-${item.id}`" :item="item" @itemAction="itemAction" v-if="item.status != 'terminated'" />
 						</template>
 					</div>
 				</div>
 			</div>
 			<div class="col-6">
+				
 				<div class="card">
 					<div class="card-header d-flex justify-content-between bg-white">
 						<h6 class="mb-0">ToDo Terminated</h6>
-						<span>{{ countTerminated }} {{ countElements == 1 ? 'item' : 'items' }}</span>
+						<span>{{ countTerminated }} {{ countTerminated == 1 ? 'item' : 'items' }}</span>
 					</div>
 					<div class="card-body doto-items">
 						<template v-for="(item) in ToDoElements">
-							<div :key="`item-${item.id}`" :class="['border p-2 mb-2 d-flex justify-content-between item-active']" v-if="item.status == 'terminated'">
-								<div class="my-auto">
-									{{ item.title }}
-								</div>
-								<div>
-									<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit"></i></button>
-									<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close"></i></button>
-								</div>
-							</div>
+							<Element :key="`item-${item.id}`" :item="item" @itemAction="itemAction" v-if="item.status == 'terminated'" />
 						</template>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 		
@@ -80,8 +66,7 @@
 </template>
 
 <script>
-import Modal from './Modal'
-import CheckBox from './CheckBox'
+import {Modal, CheckBox, Element} from '@/components'
 
 export default {
 	name: 'ToDoList',
@@ -92,8 +77,8 @@ export default {
 			formElements	: { id: "", title: "", description: "", status: "" },
 			
 			ToDoElements		: [
-				{id: 1, title: "test 1", description: "test 1", status: 'active'}, // active - draft - terminated
-				{id: 2, title: "test 2", description: "test 2", status: 'active'},
+				{id: 1, title: "test 2", description: "test 2", status: 'active'}, // active - draft - terminated
+				{id: 2, title: "test 1", description: "test 1", status: 'active'},
 			],
 			checkMode		: 'create', // create - validate - removeItem - editItem
 			
@@ -104,7 +89,7 @@ export default {
 	},
 	
 	components: {
-		Modal, CheckBox
+		Modal, CheckBox, Element
 	},
 	
 	methods: {
@@ -141,7 +126,7 @@ export default {
 		},
 		
 		// ---
-		itemAction(action, item) {
+		itemAction({action, item}) {
 			const that 			= this
 			that.checkMode		= `${action}Item`
 			that.formElements 	= {...item}
@@ -198,7 +183,8 @@ export default {
 			that.ToDoElements = that.ToDoElements.filter(item => item.status === 'active')
 		},
 		validateSave() {
-			const that = this
+			const that = this   
+			
 			that.checkMode = 'create'
 			that.ToDoElements.forEach( (item) => {
 				item.status = item.status == 'draft' ? 'active' : item.status
