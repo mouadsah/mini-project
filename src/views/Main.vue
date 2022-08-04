@@ -53,7 +53,7 @@
 					</div>
 					<div class="form-group">
 						<label for="description">Description</label>
-						<textarea class="form-control" id="description" placeholder="description" v-model="formElement.description"></textarea>
+						<textarea class="form-control" id="description" placeholder="description" v-model="formElement.description" rows="4"></textarea>
 					</div>
 				</div>
 			</template>
