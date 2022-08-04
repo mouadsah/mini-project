@@ -21,7 +21,6 @@
 				</div>
 			</div>
 			<div class="col-6">
-				
 				<div class="card">
 					<div class="card-header d-flex justify-content-between bg-white">
 						<h6 class="mb-0">ToDo Terminated</h6>
@@ -33,11 +32,10 @@
 						</template>
 					</div>
 				</div>
-				
 			</div>
 		</div>
 		
-		<modal v-show="showModal" @close="showModal = false" size="md" title>
+		<modal v-show="showModal" @close="callAction('cancel'), checkMode = 'create'" size="md" title>
 			<template v-slot:body>
 				<div>
 					<div class="form-group">
@@ -56,12 +54,11 @@
 			</template>
 			<template v-slot:footer>
 				<div>
-					<button class="btn btn-outline-secondary mr-3" @click="callAction('cancel')">Cancel</button>
+					<button class="btn btn-outline-secondary mr-3" @click="callAction('cancel'), checkMode = 'create'">Cancel</button>
 					<button class="btn btn-primary" @click="callAction(checkMode == 'create' ? 'add' : checkMode)"><i :class="['fa', checkMode == 'create' ? 'fa-plus' : 'fa-edit']"></i> {{ checkMode == 'create' ? 'Add' : 'Edit' }}</button>
 				</div>
 			</template>
 		</modal>
-		
 	</div>
 </template>
 
@@ -108,6 +105,7 @@ export default {
 				that.formElements[item] = ""
 			} )
 			that.emptyFeild 	= false
+			that.terminated 	= false
 		},
 		addAction() {
 			const that = this
@@ -121,13 +119,15 @@ export default {
 			
 			that.showModal = false
 			that.checkMode = 'validate'
-			that.ToDoElements.unshift({id: that.ToDoElements.length + 1, ...that.formElements, status: 'draft'})
+			
+			that.ToDoElements.unshift({...that.formElements, status: 'draft', id: that.ToDoElements.length + 1})
 			that.cancelAction()
 		},
 		
 		// ---
 		itemAction({action, item}) {
 			const that 			= this
+			that.terminated		= false
 			that.checkMode		= `${action}Item`
 			that.formElements 	= {...item}
 			that.showModal 		= action == 'edit' // editItem
