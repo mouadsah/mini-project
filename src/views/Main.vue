@@ -76,7 +76,7 @@ export default {
 			
 			formElements	: { id: "", title: "", description: "", status: "" },
 			
-			ToDoElements		: [
+			ToDoElements	: [
 				{id: 1, title: "test 2", description: "test 2", status: 'active'}, // active - draft - terminated
 				{id: 2, title: "test 1", description: "test 1", status: 'active'},
 			],
