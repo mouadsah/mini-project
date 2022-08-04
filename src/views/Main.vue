@@ -18,7 +18,7 @@
 					</div>
 					<div class="card-body doto-items">
 						<template v-for="(item, id) in ToDoElements">
-							<Element :key="`active-${id}`" :item="item" @itemAction="itemAction" v-if="item.status != 'terminated'" :disableAction="checkMode != 'create'" :currentItem="formElement" />
+							<Element :key="`active-${id}`" :item="item" @itemAction="itemAction" v-if="item.status != 'terminated'" :currentItem="formElement" />
 						</template>
 					</div>
 				</div>
@@ -32,7 +32,7 @@
 					</div>
 					<div class="card-body doto-items">
 						<template v-for="(item, id) in ToDoElements">
-							<Element :key="`terminated-${id}`" :item="item" @itemAction="itemAction" v-if="item.status == 'terminated'" :disableAction="checkMode != 'create'" :currentItem="formElement" />
+							<Element :key="`terminated-${id}`" :item="item" @itemAction="itemAction" v-if="item.status == 'terminated'" :currentItem="formElement" />
 						</template>
 					</div>
 				</div>
@@ -79,7 +79,7 @@
 					<div>
 						<h4>Are you sure !</h4>
 						<p class="m-0" style="font-size: 13px;">Do you want really to delete this note ?</p>
-						<h6>{{  formElement.title }}</h6>
+						<h6>{{ formElement.title }}</h6>
 					</div>
 					<div>
 						<button class="btn btn-secondary mr-3" @click="saveAction('cancel')">Cancel</button>
@@ -206,7 +206,9 @@ export default {
 				if( that.formElement.id == item.id ) {
 					item.title		 = that.formElement.title
 					item.description = that.formElement.description
-					item.status		 = that.terminated ? 'terminated' : 'active' // item.status
+					item.status		 = that.terminated ? 'terminated' : 'active'
+				} else {
+					item.status		 = item.status == 'draft' ? 'active' : item.status
 				}
 			}
 			that.toggle.actions = false

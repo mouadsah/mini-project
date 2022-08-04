@@ -4,8 +4,8 @@
 			{{ item.title }}
 		</p>
 		<div v-if="item.status != 'draft'">
-			<button class="btn btn-sm btn-default" @click="itemAction('edit', item)" :disabled="disableAction"><i class="fa fa-edit text-primary"></i></button>
-			<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)" :disabled="disableAction"><i class="fa fa-close text-danger"></i></button>
+			<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit text-primary"></i></button>
+			<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close text-danger"></i></button>
 		</div>
 	</div>
 </template>
@@ -13,7 +13,6 @@
 	export default {
 		name: 'Element',
 		props: {
-			disableAction	: {type: Boolean, default: false},
 			currentItem		: {type: Object},
 			item			: {type: Object},
 		},
@@ -31,9 +30,7 @@
 		methods: {
 			itemAction: function (action, item) {
 				const that = this
-				if( !that.disableAction ) {
-					this.$emit('itemAction', {action, item})
-				}
+				that.$emit('itemAction', {action, item})
 			}
 		}
 	}
