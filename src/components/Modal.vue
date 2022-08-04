@@ -69,6 +69,7 @@
 		z-index: 9999;
 		
 		.modal-md {
+			border-radius: 8px;
 			background: #ffffff;
 			box-shadow: 2px 2px 20px 1px;
 			overflow: initial;
@@ -101,7 +102,11 @@
 		
 		.modal-header-md, .modal-footer-md {
 			padding: 15px;
-			/* display: flex; */
+			border-radius: 0px 0px 8px 8px;
+			button {
+				border-radius: 20px;
+				width: 45px;
+			}
 		}
 		
 		.modal-header-md {
