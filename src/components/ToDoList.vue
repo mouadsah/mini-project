@@ -1,0 +1,239 @@
+<template>
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-6 mb-4">
+				<button class="btn btn-default mr-2" @click="saveAction('cancel')" v-if="checkMode != 'create'">Cancel</button>
+				<button class="btn btn-secondary text-capitalize" @click="saveAction(checkMode)">{{ checkMode == 'create' ? checkMode : 'validate' }}</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				<div class="card">
+					<div class="card-header d-flex justify-content-between bg-white">
+						<h6 class="mb-0">ToDo Active</h6>
+						<span>{{ countElements }} {{ countElements == 1 ? 'item' : 'items' }}</span>
+					</div>
+					<div class="card-body doto-items">
+						<template v-for="(item) in ToDoElements">
+							<div :key="`item-${item.id}`" :class="['border p-2 mb-2 d-flex justify-content-between', item.status != 'draft' ? 'item-active' : '']" v-if="item.status != 'terminated'">
+								<div class="my-auto">
+									{{ item.title }}
+								</div>
+								<div v-if="item.status != 'draft'">
+									<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit"></i></button>
+									<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close"></i></button>
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="card">
+					<div class="card-header d-flex justify-content-between bg-white">
+						<h6 class="mb-0">ToDo Terminated</h6>
+						<span>{{ countTerminated }} {{ countElements == 1 ? 'item' : 'items' }}</span>
+					</div>
+					<div class="card-body doto-items">
+						<template v-for="(item) in ToDoElements">
+							<div :key="`item-${item.id}`" :class="['border p-2 mb-2 d-flex justify-content-between item-active']" v-if="item.status == 'terminated'">
+								<div class="my-auto">
+									{{ item.title }}
+								</div>
+								<div>
+									<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit"></i></button>
+									<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close"></i></button>
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<modal v-show="showModal" @close="showModal = false" size="md" title>
+			<template v-slot:body>
+				<div>
+					<div class="form-group">
+						<check-box id="asdasd" v-model="terminated" val="terminated" label="Terminated" :disabled="checkMode == 'create'"></check-box>
+					</div>
+					<div class="form-group">
+						<label for="title">Title</label>
+						<input type="text" id="title" :class="['form-control', emptyFeild ? 'border-danger' : '']" placeholder="Title" v-model.trim="formElements.title" @keyup="checkFeild" />
+						<small class="text-danger" v-if="emptyFeild">*Le titre doit être unique et non vide !</small>
+					</div>
+					<div class="form-group">
+						<label for="description">Description</label>
+						<textarea class="form-control" id="description" placeholder="description" v-model="formElements.description"></textarea>
+					</div>
+				</div>
+			</template>
+			<template v-slot:footer>
+				<div>
+					<button class="btn btn-default mr-3" @click="callAction('cancel')">Cancel</button>
+					<button class="btn btn-secondary" @click="callAction(checkMode == 'create' ? 'add' : checkMode)">{{ checkMode == 'create' ? 'Add' : 'Edit' }}</button>
+				</div>
+			</template>
+		</modal>
+		
+	</div>
+</template>
+
+<script>
+import Modal from './Modal'
+import CheckBox from './CheckBox'
+
+export default {
+	name: 'ToDoList',
+	data() {
+		return {
+			showModal		: false,
+			
+			formElements	: { id: "", title: "", description: "", status: "" },
+			
+			ToDoElements		: [
+				{id: 1, title: "test 1", description: "test 1", status: 'active'}, // active - draft - terminated
+				{id: 2, title: "test 2", description: "test 2", status: 'active'},
+			],
+			checkMode		: 'create', // create - validate - removeItem - editItem
+			
+			terminated		: false,
+			
+			emptyFeild		: false,
+		};
+	},
+	
+	components: {
+		Modal, CheckBox
+	},
+	
+	methods: {
+		callAction(action = '') {
+			const that = this
+			if( ['add', 'cancel'].includes(action) ) {
+				that[`${action}Action`]()
+				return
+			}
+			that[that.checkMode]() // that.checkMode == 'editItem'
+		},
+		cancelAction() {
+			const that 			= this
+			that.showModal 		= false
+			Object.keys(that.formElements).forEach( (item) => {
+				that.formElements[item] = ""
+			} )
+			that.emptyFeild 	= false
+		},
+		addAction() {
+			const that = this
+			
+			let checkTitle 	= that.ToDoElements.filter(item => that.formElements.title == item.title)
+			if( checkTitle.length > 0 || that.formElements.title.trim() == '' ) {
+				that.emptyFeild = true
+				return
+			}
+			that.emptyFeild = false
+			
+			that.showModal = false
+			that.checkMode = 'validate'
+			that.ToDoElements.unshift({id: that.ToDoElements.length + 1, ...that.formElements, status: 'draft'})
+			that.cancelAction()
+		},
+		
+		// ---
+		itemAction(action, item) {
+			const that 			= this
+			that.checkMode		= `${action}Item`
+			that.formElements 	= {...item}
+			that.showModal 		= action == 'edit' // editItem
+		},
+		removeItem() {
+			const that = this
+			that.ToDoElements 	= that.ToDoElements.filter(item => that.formElements.id != item.id)
+			that.checkMode		= 'create'
+			that.cancelAction()
+		},
+		editItem() {
+			const that = this
+			that.formElements.status = 'edit'
+			that.showModal 			 = false
+		},
+		// ---
+		saveAction(action) {
+			const that = this
+			if( ['validate', 'cancel'].includes(action) ) {
+				that[`${action}Save`]()
+				return
+			}
+			
+			if( that.checkMode == 'removeItem' ) {
+				that[that.checkMode]()
+				return
+			}
+			if( that.checkMode == 'editItem' && that.formElements.status == 'edit' ) {
+				that.editAction()
+				return
+			}
+			
+			that.showModal = true
+		},
+		editAction() {
+			const that = this
+			for( let item of that.ToDoElements ) {
+				if( that.formElements.id == item.id ) {
+					item.title		 = that.formElements.title
+					item.description = that.formElements.description
+					item.status		 = that.terminated ? 'terminated' : item.status
+				}
+			}
+			that.showModal 		= false
+			that.checkMode		= 'create'
+			that.terminated		= false
+			that.cancelAction()
+			// Api
+		},
+		cancelSave() {
+			const that 		= this
+			that.checkMode	= 'create'
+			that.ToDoElements = that.ToDoElements.filter(item => item.status === 'active')
+		},
+		validateSave() {
+			const that = this
+			that.checkMode = 'create'
+			that.ToDoElements.forEach( (item) => {
+				item.status = item.status == 'draft' ? 'active' : item.status
+			} )
+			// Api
+		},
+		checkFeild() {
+			const that = this
+			if( that.emptyFeild && that.formElements.trim != '' ) {
+				that.emptyFeild = false
+			}
+		}
+	},
+	computed: {
+		countElements() {
+			const that 	 = this
+			let elements = that.ToDoElements.filter(item => item.status != "terminated")
+			return elements.length
+		},
+		countTerminated() {
+			const that 	 = this
+			let elements = that.ToDoElements.filter(item => item.status === "terminated")
+			return elements.length
+		},
+	},
+}
+</script>
+
+<style scoped lang="scss">
+	.doto-items {
+		max-height: 300px;
+		overflow-y: auto;
+		
+		.item-active {
+			background-color: #eee;
+		}
+	}
+</style>
