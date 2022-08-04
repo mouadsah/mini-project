@@ -151,14 +151,14 @@ export default {
 			that.toggle.actions = false
 			that.checkMode = 'validate'
 			
-			that.ToDoElements.unshift({...that.formElement, status: 'draft', id: that.ToDoElements.length + 1})
+			that.ToDoElements.unshift({...that.formElement, status: 'draft', id: (new Date()).getTime()})
 			that.cancelAction()
 		},
 		
 		// ---
 		itemAction({action, item}) {
 			const that 			= this
-			that.terminated		= false
+			that.terminated		= item.status == "terminated"
 			that.checkMode		= `${action}Item`
 			that.formElement 	= {...item}
 			that.toggle.actions = action == 'edit' // editItem
@@ -206,13 +206,14 @@ export default {
 				if( that.formElement.id == item.id ) {
 					item.title		 = that.formElement.title
 					item.description = that.formElement.description
-					item.status		 = that.terminated ? 'terminated' : item.status
+					item.status		 = that.terminated ? 'terminated' : 'active' // item.status
 				}
 			}
 			that.toggle.actions = false
 			that.checkMode		= 'create'
 			that.terminated		= false
 			that.cancelAction()
+			
 			// Request Api
 			// endPoint : https://jsonplaceholder.typicode.com/
 			// params 	: that.formElement
