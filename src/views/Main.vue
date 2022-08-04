@@ -2,8 +2,8 @@
 	<div class="container mt-5">
 		<div class="row">
 			<div class="col-6 mb-4">
-				<button class="btn btn-default mr-2" @click="saveAction('cancel')" v-if="checkMode != 'create'">Cancel</button>
-				<button class="btn btn-secondary text-capitalize" @click="saveAction(checkMode)">{{ checkMode == 'create' ? checkMode : 'validate' }}</button>
+				<button class="btn btn-outline-secondary mr-2" @click="saveAction('cancel')" v-if="checkMode != 'create'">Cancel</button>
+				<button :class="['btn text-capitalize', checkMode == 'create' ? 'btn-primary' : 'btn-success']" @click="saveAction(checkMode)">{{ checkMode == 'create' ? checkMode : 'validate' }}</button>
 			</div>
 		</div>
 		<div class="row">
@@ -56,8 +56,8 @@
 			</template>
 			<template v-slot:footer>
 				<div>
-					<button class="btn btn-default mr-3" @click="callAction('cancel')">Cancel</button>
-					<button class="btn btn-secondary" @click="callAction(checkMode == 'create' ? 'add' : checkMode)">{{ checkMode == 'create' ? 'Add' : 'Edit' }}</button>
+					<button class="btn btn-outline-secondary mr-3" @click="callAction('cancel')">Cancel</button>
+					<button class="btn btn-primary" @click="callAction(checkMode == 'create' ? 'add' : checkMode)"><i :class="['fa', checkMode == 'create' ? 'fa-plus' : 'fa-edit']"></i> {{ checkMode == 'create' ? 'Add' : 'Edit' }}</button>
 				</div>
 			</template>
 		</modal>

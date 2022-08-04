@@ -4,8 +4,8 @@
 			{{ item.title }}
 		</div>
 		<div v-if="item.status != 'draft'">
-			<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit"></i></button>
-			<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close"></i></button>
+			<button class="btn btn-sm btn-default" @click="itemAction('edit', item)"><i class="fa fa-edit text-primary"></i></button>
+			<button class="btn btn-sm btn-default ml-2" @click="itemAction('remove', item)"><i class="fa fa-close text-danger"></i></button>
 		</div>
 	</div>
 </template>
